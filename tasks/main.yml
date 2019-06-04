@@ -1,0 +1,41 @@
+---
+# tasks file for ethercalc
+
+- name: ensure ethercalc user is present
+  user:
+    name: "{{ ethercalc_user }}"
+    home: "{{ ethercalc_home }}"
+    shell: "/bin/bash"
+
+- name: ensure required packages are installed
+  yum:
+    pkg: "{{ item }}"
+  loop: "{{ ethercalc_required_packages }}"
+
+- name: ensure ethercalc is latest
+  git:
+    repo: "{{ ethercalc_repository }}"
+    dest: "{{ ethercalc_path }}"
+    version: "{{ ethercalc_repository_version}}"
+    key_file: "{{ ethercalc_repository_key_file}}"
+  become_user: "{{ ethercalc_user }}"
+  register: repository
+  vars:
+    ansible_ssh_pipelining: True
+
+- name: install ethercalc
+  command: npm install -g
+  args:
+    chdir: "{{ ethercalc_path }}"
+  when: repository.changed
+
+- name: setup systemd service
+  template:
+    src: ethercalc.systemd.j2
+    dest: /etc/systemd/system/ethercalc.service
+
+- name: ensure ethercalc is started and will start after system is booted
+  service:
+    name: ethercalc
+    enabled: yes
+    state: started
