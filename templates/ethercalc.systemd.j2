@@ -8,7 +8,7 @@ After=syslog.target network.target
 Type=simple
 User=ethercalc
 Group=ethercalc
-ExecStart=/usr/bin/ethercalc --port 8000 --cors {% if ethercalc_use_redis %}--expire {{ ethercalc_spread_seconds_to_expire }}{% endif %}
+ExecStart=/usr/bin/ethercalc --port 8000 --cors {% if ethercalc_use_redis %}--expire {{ ethercalc_spreadsheets_seconds_to_expire }}{% endif %}
 
 [Install]
 WantedBy=multi-user.target
