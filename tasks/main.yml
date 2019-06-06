@@ -19,9 +19,10 @@
     version: "{{ ethercalc_repository_version}}"
     key_file: "{{ ethercalc_repository_key_file}}"
   become_user: "{{ ethercalc_user }}"
+  become: true
   register: repository
   vars:
-    ansible_ssh_pipelining: True
+    ansible_ssh_pipelining: true
 
 - name: install ethercalc
   command: npm install -g
